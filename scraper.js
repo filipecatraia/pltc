@@ -1,24 +1,10 @@
-import axios from './lib/axios.js'
-import * as cheerio from 'cheerio'
 import parseMEP from './lib/parseMEP.js'
-import config from './lib/config.js'
+import getLegislatorList from './lib/getLegislatorList.js'
 
 export const scrapeEULegislators = async () => {
   const result = []
 
-  /**
-   * I've added a cache mechanism in a couple of minutes, but really it's
-   * only useful for long-running processes, otherwise it repopulates the
-   * cache element on every re-run
-   */
-  const requestBody = await axios.get(config.scraper.MEMBER_PAGE)
-
-  /**
-   * This should be abstracted away, so it can load any page.
-   * It's hard-coded for the current page as it is.
-   */
-  const $ = cheerio.load(requestBody.data)
-  const $list = $(config.scraper.MEMBER_LIST)
+  const $list = await getLegislatorList()
 
   /**
    * This blows up quite easily. Have a member that doesn't parse,
